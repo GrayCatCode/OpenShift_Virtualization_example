@@ -1,0 +1,29 @@
+namespace: vm-workloads
+vmName: vm-helm
+cpu: 2
+memory: 4Gi
+
+serviceAccount:
+  create: true
+rbac:
+  create: true
+
+multus:
+  enabled: true
+  networkName: macvlan-net
+
+datavolume:
+  enabled: true
+  url: "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
+  storage:
+    size: 10Gi
+    storageClass: my-block-storage
+
+containerDiskImage: kubevirt/fedora-cloud-container-disk-demo:latest
+
+cloudInitUserData: |
+  #cloud-config
+  users:
+    - name: clouduser
+      ssh-authorized-keys:
+        - "ssh-rsa AAAAB3Nza... user@example.com"
