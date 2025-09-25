@@ -1,0 +1,14 @@
+namespace: vm-workloads
+vmName: vm-helm
+cpu: 2
+memory: 4Gi
+storage:
+  size: 20Gi
+  storageClass: my-block-storage
+containerDiskImage: kubevirt/fedora-cloud-container-disk-demo:latest
+cloudInitUserData: |
+  #cloud-config
+  users:
+    - name: clouduser
+      ssh-authorized-keys:
+        - "ssh-rsa AAAA... user@example.com"

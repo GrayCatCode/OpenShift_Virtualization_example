@@ -1,0 +1,35 @@
+{{- $fullName := include "vm-chart.fullname" . -}}
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: {{ .Values.vmName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ $fullName }}
+    spec:
+      domain:
+        cpu:
+          cores: {{ .Values.cpu }}
+        resources:
+          requests:
+            memory: {{ .Values.memory }}
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+      volumes:
+        - name: containerdisk
+          containerDisk:
+            image: {{ .Values.containerDiskImage | quote }}
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userData: |
+{{ .Values.cloudInitUserData | indent 12 }}

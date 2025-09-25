@@ -1,0 +1,41 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: vm-example
+  namespace: vm-workloads
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: vm-example
+    spec:
+      domain:
+        cpu:
+          cores: 2
+        resources:
+          requests:
+            memory: 4Gi
+        devices:
+          disks:
+            - name: rootdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+      volumes:
+        - name: rootdisk
+          persistentVolumeClaim:
+            claimName: vm-root-disk
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              users:
+                - name: clouduser
+                  ssh-authorized-keys:
+                    - "ssh-rsa AAAA... user@example.com"
+                  sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+              packages:
+                - vim
